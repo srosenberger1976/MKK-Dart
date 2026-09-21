@@ -4153,35 +4153,11 @@ function archiveCurrentMatch(matchName) {
    console.error(e);
    alert("Fehler beim Speichern des Spiels! Möglicherweise ist der Speicher voll.");
  }
-
- // ===================================================================
- // NEU: Löscht temporäre Spieler nach dem Spieltag aus den Listen
- // ===================================================================
- if (state && state.parsedTeams) {
-     Object.keys(state.parsedTeams).forEach(teamName => {
-         // Behält nur offizielle Spieler. Alle Spieler, die das Merkmal 
-         // 'isTemporary' haben oder deren Passnummer mit 'TEMP-' beginnt, fliegen raus!
-         state.parsedTeams[teamName] = state.parsedTeams[teamName].filter(player => {
-             return !player.isTemporary && (!player.id || !player.id.toString().startsWith('TEMP-'));
-         });
-     });
- }
-
- // Aufstellungen und Auswechslungen für das nächste Spiel komplett zurücksetzen
- if (state) {
-     state.substitutions = [];
-     state.substitutedOutPlayers = [];
-     state.subRelation = {};
-     localStorage.setItem('Dart_state', JSON.stringify(state));
- }
- console.log("Temporäre Spieler wurden nach dem Spieltag erfolgreich entfernt!");
-
-} // <-- Das hier ist die schließende geschweifte Klammer von archiveCurrentMatch
+}
 window.archiveCurrentMatch = archiveCurrentMatch;
 
 // Funktion 2: Lädt das ausgewählte Spiel und schaltet die App sofort live um
 function loadArchivedMatch() {
-
  const select = document.getElementById('history-load-select');
  if(!select || select.value === "") return alert("Bitte wähle ein Spiel aus!");
  
@@ -4569,71 +4545,60 @@ window.generateAdminJsonUpdate = generateAdminJsonUpdate;
 // KAPITÄNS-IMPORT: LÄDT DAS GOOGLE DRIVE SAISON-UPDATE IN DIE APP
 // ===================================================================
 function importCaptainJsonUpdate(event) {
-  const file = event.target.files;
-  if (!file) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.plan || !data.teams) return alert("❌ Keine gültige Update-Datei!");
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            
+            // Überprüfung, ob es sich um eine gültige Update-Datei handelt
+            if (!data.plan || !data.teams) {
+                return alert("❌ Fehler: Dies ist keine gültige Dart-Update-Datei aus Google Drive!");
+            }
 
-      // 1. Sichere die aktuellen Live-Spielstände
-      const activeMatch = state.isMatchActive;
-      const currentScores = state.scores || { team1: 0, team2: 0 };
-      const currentMatchIdx = state.currentMatchIdx || 0;
-      const runningSubstitutions = state.substitutions || [];
-      const runningSubOut = state.substitutedOutPlayers || [];
-      const runningSubRel = state.subRelation || {};
-      const runningGameResults = state.gameResults || [];
+            // Sicherung des aktuellen Zustands für ein eventuelles Undo
+            if (typeof saveHistory === "function") saveHistory();
 
-      // 2. Grunddaten aus der JSON einspielen
-      state.title1 = data.t1 || state.title1;
-      state.title2 = data.t2 || state.title2;
-      state.parsedTeams = data.teams;
-      state.rawMatrixData = data.rawText || [];
-      matchesDefinition = data.plan;
+            // Die neuen Admin-Daten werden sicher in die App eingespielt
+            state.title1 = data.t1 || "MKK Spielberichtsbogen";
+            state.title2 = data.t2 || "DSH Dart - Liga";
+            state.parsedTeams = data.teams;
+            state.rawMatrixData = data.rawText || [];
+            
+            // Der neue Spielplan wird global gesetzt
+            matchesDefinition = data.plan;
 
-      // ===================================================================
-      // NEU: INTELLIGENTER FILTER FÜR NACHTRÄGLICHE SPIELER
-      // ===================================================================
-      // Wenn Kapitäne später Spieler nachtragen, haben diese oft keine ID/Passnummer.
-      // Wir prüfen alle Teams durch und markieren "ID-lose" Spieler sofort als TEMP!
-      if (state.parsedTeams) {
-          Object.keys(state.parsedTeams).forEach(teamName => {
-              state.parsedTeams[teamName].forEach(player => {
-                  if (!player.id || player.id === "" || player.id === 0) {
-                      player.id = "TEMP-" + Math.floor(Math.random() * 1000000);
-                      player.isTemporary = true; // Markierung für die Löschung nach dem Spieltag
-                  }
-              });
-          });
-      }
+            // Zurücksetzen aller Zähler auf Start (0:0, Spiel 1, keine alten Wechsel-Leichen)
+            state.currentMatchIdx = 0;
+            state.scores = { team1: 0, team2: 0 };
+            state.substitutions = [];
+            state.substitutedOutPlayers = [];
+            state.subRelation = {};
+            state.stats = {};
+            state.history = [];
+            state.gameResults = [];
+            state.isMatchActive = false;
 
-      // 3. Übertrage den geschützten Live-Zustand zurück
-      state.isMatchActive = activeMatch;
-      state.scores = currentScores;
-      state.currentMatchIdx = currentMatchIdx;
-      state.substitutions = runningSubstitutions;
-      state.substitutedOutPlayers = runningSubOut;
-      state.subRelation = runningSubRel;
-      state.gameResults = runningGameResults;
+            // Aktualisiert die Anzeige auf dem Bildschirm sofort live
+            if (typeof renderCurrentGame === "function") renderCurrentGame();
+            if (typeof updateLeaderboard === "function") updateLeaderboard();
+            if (typeof saveAppState === "function") saveAppState();
 
-      // 4. Speicher sichern und Ansichten aktualisieren
-      localStorage.setItem('Dart_state', JSON.stringify(state));
-      
-      if (typeof buildTeamDropdowns === "function") buildTeamDropdowns();
-      if (typeof renderCurrentGame === "function") renderCurrentGame();
-      if (typeof updateLeaderboard === "function") updateLeaderboard();
+            alert("🎯 Saison-Update erfolgreich eingespielt!\n\nAlle neuen Spieler, Mannschaften und der aktuelle Spielplan wurden geladen. Ihr könnt das Match jetzt starten!");
+            
+            // Schließt das offene Import-Fenster/Modal automatisch, falls vorhanden
+            const quickMenu = document.getElementById('quick-import-modal') || document.getElementById('file-import-popup');
+            if (quickMenu) quickMenu.style.display = 'none';
 
-      alert("🎯 Saison-Update erfolgreich geladen!\n\nNeue Spieler wurden importiert. Nachgemeldete Spieler ohne Passnummer wurden für diesen Spieltag abgesichert.");
-      location.reload();
-    } catch (err) { alert("❌ Fehler: " + err.message); }
-  };
-  reader.readAsText(file);
+        } catch (err) {
+            alert("❌ Fehler beim Lesen der Datei: " + err.message);
+        }
+    };
+    reader.readAsText(file);
 }
 window.importCaptainJsonUpdate = importCaptainJsonUpdate;
-
 
 
 
