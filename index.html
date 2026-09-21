@@ -29,10 +29,8 @@
  }
  
 
-/* Das h1 bekommt einen eigenen Abstand nach oben, damit es unter die Symbole rutscht: */
-h1 { margin-top: 45px !important; text-align: center; margin-bottom: 10px; }
-h2, h3, h4 { text-align: center; margin-bottom: 10px; }
 
+h1, h2, h3, h4 { text-align: center; margin-bottom: 10px; }
 
 
 
@@ -458,17 +456,14 @@ div:has(> .score-board),
 
 
 
- <!-- HIER GENAU DEN NEUEN BUTTON REINKOPIEREN: -->
+ <!-- EXPORT-BUTTON FÜR DEN LIGA-ADMIN -->
  <div style="background:#eff6ff; border:2px solid #3b82f6; padding:12px; border-radius:6px; margin-bottom:15px; text-align:center; color: #1e40af;">
-   <h4 style="margin-top:0; color:#1e40af; font-size:14px; text-align: center;">📤 Aktuelle Saison-Update-Datei generieren</h4>
-   <p style="font-size:11px; color:#1e3a8a; margin-bottom:10px; text-align: center;">Sichert alle Mannschaften, Spieler, Passnummern und den aktuellen Spielplan in einer JSON-Datei für die Kapitäne.</p>
+   <h4 style="margin-top:0; color:#1e40af; font-size:14px; text-align: center;">📤 Saison-Update-Datei generieren</h4>
+   <p style="font-size:11px; color:#1e3a8a; margin-bottom:10px; text-align: center;">Erstellt eine JSON-Datei mit allen aktuellen Mannschaften und dem Spielplan für die Kapitäne.</p>
    <button type="button" class="btn" style="width:100%; padding:10px; background-color:#3b82f6; color:white; font-weight:bold; border:none; border-radius:4px; cursor:pointer;" onclick="generateAdminJsonUpdate()">
-     💾 Update-Datei mit Zeitstempel erzeugen
+     💾 JSON-Update mit Zeitstempel erzeugen
    </button>
  </div>
-
- <button class="btn btn-action" style="width:100%; background-color:#22c55e;" onclick="closeProtectedSettings()">Speichern &amp; Schließen</button>
-</div>
 
 
  
@@ -668,69 +663,99 @@ function switchLigaStorage() {
     }
 })();
 
+
+
+
+
+
+
+
+
+
+
+
+
 // =========================================================================
 // REPARATUR V6: ABSOLUT SICHERES EINTRAGEN IN DIE LIVE-LISTE
 // =========================================================================
 function addManualPlayerQuick() {
-    const nameInput = document.querySelector('input[placeholder="Spielername..."]');
-    const passInput = document.querySelector('input[placeholder="Passnr."]');
-    const teamSelect = document.getElementById('quick-team-select') || document.querySelector('.modal select') || document.querySelector('#quickAccessModal select');
+  const nameInput = document.querySelector('input[placeholder="Spielername..."]');
+  const passInput = document.querySelector('input[placeholder="Passnr."]');
+  const teamSelect = document.getElementById('quickNewPlayerTeam');
 
-    if (!nameInput || !nameInput.value.trim()) {
-        alert("Bitte einen Spielernamen eingeben!");
-        return;
-    }
+  if (!nameInput || !nameInput.value.trim()) {
+    alert("Bitte einen Spielernamen eingeben!");
+    return;
+  }
 
-    const playerName = nameInput.value.trim();
-    const playerPass = passInput ? passInput.value.trim() : "";
-    const formatName = playerPass ? `${playerName} (${playerPass})` : playerName;
+  const playerName = nameInput.value.trim();
+  const playerPass = passInput ? passInput.value.trim() : "";
+  
+  // WICHTIG: Das exakte Textformat, das Ihre App aus den Excel-Daten liest
+  const formatName = playerPass ? `${playerName} (${playerPass})` : playerName;
 
-    // 1. Wir suchen ALLE Dropdowns auf der Seite (H1, H2, H3, H4, G1, G2...)
-    const allSelects = document.querySelectorAll('select');
-    let hinfuegenErfolgreich = false;
+  let ausgewaehltesTeam = teamSelect ? teamSelect.value : "";
 
-    allSelects.forEach(select => {
-        // Wir filtern die System-Dropdowns aus (wie das Admin- oder Team-Auswahlfeld)
-        if (select !== teamSelect && !select.id.includes('team') && !select.id.includes('build')) {
-            // Erstelle eine neue Auswahl-Option für den Spieler
-            const option = document.createElement('option');
-            option.value = playerName; // Der Wert, den das System beim Berechnen nutzt
-            option.text = formatName;  // Der Text, den man sieht
-            
-            select.appendChild(option);
-            hinfuegenErfolgreich = true;
-        }
-    });
+  if (!ausgewaehltesTeam && typeof state !== "undefined" && state.heimTeam) {
+    ausgewaehltesTeam = state.heimTeam;
+  }
 
-    // 2. Wir sichern den Spieler im App-Zustand, damit er beim echten Speichern nicht verloren geht
-    if (typeof state !== 'undefined') {
-        // Wir packen den Spieler in jede erdenkliche Liste, die deine App im Hintergrund nutzen könnte
-        if (!state.manualPlayers) state.manualPlayers = [];
-        state.manualPlayers.push({ name: playerName, pass: playerPass });
-        
-        // Falls deine App ein globales Spieler-Array versteckt hat:
-        for (let key in state) {
-            if (Array.isArray(state[key]) && (key.toLowerCase().includes('player') || key.toLowerCase().includes('spieler'))) {
-                state[key].push({ name: playerName, pass: playerPass });
-            }
-        }
-        if (typeof saveAppState === "function") saveAppState();
-    }
+  if (!ausgewaehltesTeam) {
+    alert("Bitte wähle eine Mannschaft aus!");
+    return;
+  }
 
-    // 3. Im LocalStorage für diese Sitzung merken
-    let sessionPlayers = JSON.parse(localStorage.getItem('quick_added_players') || "[]");
-    sessionPlayers.push({ name: playerName, pass: playerPass });
-    localStorage.setItem('quick_added_players', JSON.stringify(sessionPlayers));
+  // 1. Speichern im Core-Gehirn (Sowohl als Objekt als auch als Text-Fallback für maximale Sicherheit)
+  if (typeof state !== "undefined" && state.parsedTeams) {
+      if (!state.parsedTeams[ausgewaehltesTeam]) {
+          state.parsedTeams[ausgewaehltesTeam] = [];
+      }
+      
+      const existiertBereits = state.parsedTeams[ausgewaehltesTeam].some(p => {
+          return p === formatName || (p && p.name === playerName) || p === playerName;
+      });
 
-    // Felder leeren
-    nameInput.value = "";
-    if (passInput) passInput.value = "";
+      if (!existiertBereits) {
+          // Wir schieben das Format rein, das die App für die Dropdowns nutzt
+          state.parsedTeams[ausgewaehltesTeam].push(formatName);
+          
+          // Und sichern das Objekt für die Lösch-Logik nach dem Spieltag
+          state.parsedTeams[ausgewaehltesTeam].push({
+              name: playerName,
+              id: playerPass || "TEMP-" + Math.floor(Math.random() * 1000000),
+              isTemporary: true
+          });
+      }
+  }
 
-    alert("Spieler " + playerName + " wurde direkt in alle Auswahllisten (H1, H2 etc.) eingetragen!");
-    
-    // WICHTIG: Hier KEIN location.reload() machen, da wir die Liste gerade live im Browser befüllt haben!
+  // 2. Den Spieler direkt physisch in JEDES Dropdown auf dem Bildschirm einbauen
+  const allSelects = document.querySelectorAll('select');
+  allSelects.forEach(select => {
+      // Filtert Admin-Felder aus und betrifft nur die echten Spiel-Dropdowns
+      if (select.id !== 'quickNewPlayerTeam' && !select.id.includes('team') && !select.id.includes('build') && !select.id.includes('history')) {
+          const option = document.createElement('option');
+          option.value = formatName; // KORREKTUR: Value und Text müssen identisch sein, damit das Übertragen klappt!
+          option.textContent = formatName;
+          select.appendChild(option);
+          
+          // Zwingt den Browser, eine Änderung zu registrieren
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+  });
+
+  // 3. App-Zustand dauerhaft sichern und Oberfläche aktualisieren
+  if (typeof saveAppState === "function") saveAppState();
+  if (typeof buildTeamDropdowns === "function") buildTeamDropdowns();
+  if (typeof renderCurrentGame === "function") renderCurrentGame();
+
+  alert(`🎯 Spieler "${playerName}" erfolgreich eingetragen und freigeschaltet!`);
+  
+  if (nameInput) nameInput.value = "";
+  if (passInput) passInput.value = "";
+  if (typeof closeQuickAccess === "function") closeQuickAccess();
 }
-window.addManualPlayerQuick = addManualPlayerQuick;
+
+
 
 
 
@@ -4796,19 +4821,14 @@ function importCaptainJsonUpdate(event) {
 window.importCaptainJsonUpdate = importCaptainJsonUpdate;
 
 
-
 function generateAdminJsonUpdate() {
-    if (!state || !matchesDefinition) return alert("Keine Spieldaten zum Exportieren vorhanden!");
-
-    if (typeof savePlanEditorRows === "function") savePlanEditorRows(); 
-    if (typeof savePlayerMatrixRows === "function") savePlayerMatrixRows(); 
-    if (typeof updateSetupTitles === "function") updateSetupTitles();
+    if (typeof state === "undefined" || !state) return alert("Keine Spieldaten zum Exportieren vorhanden!");
 
     const updatePackage = {
         t1: state.title1 || "MKK Spielberichtsbogen",
         t2: state.title2 || "DSH Dart - Liga",
-        plan: matchesDefinition,
-        teams: state.parsedTeams,
+        plan: typeof matchesaDefinition !== "undefined" ? matchesDefinition : [],
+        teams: state.parsedTeams || {},
         rawText: state.rawMatrixData || []
     };
 
@@ -4831,6 +4851,7 @@ function generateAdminJsonUpdate() {
     alert(`🎉 Erfolgreich!\n\nDie Datei "${dateiName}" wurde generiert.\n\nSende diese Datei einfach per WhatsApp an deine Kapitäne.`);
 }
 window.generateAdminJsonUpdate = generateAdminJsonUpdate;
+
 
 
 </script>
