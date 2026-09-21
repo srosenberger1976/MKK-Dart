@@ -4536,6 +4536,50 @@ window.assignScoreToPlayer = assignScoreToPlayer;
 // GOOGLE DRIVE UPDATE-SYSTEM (JSON EXPORT OHNE DATEN-MÜLL)
 // ===================================================================
 function generateAdminJsonUpdate() {
+    try {
+        if (typeof state === "undefined" || !state) {
+            alert("Keine Spieldaten zum Exportieren vorhanden!");
+            return;
+        }
+
+        let spielplanData = [];
+        if (typeof matchesDefinition !== "undefined") { 
+            spielplanData = matchesDefinition; 
+        } else if (state.matches) { 
+            spielplanData = state.matches; 
+        }
+
+        const updatePackage = {
+            t1: state.title1 || "MKK Spielberichtsbogen",
+            t2: state.title2 || "DSH Dart - Liga",
+            plan: spielplanData,
+            teams: state.parsedTeams || {},
+            rawText: state.rawMatrixData || []
+        };
+
+        const jetzt = new Date();
+        const tagStr = jetzt.toLocaleDateString('de-DE').replace(/\./g, '-');
+        const stunden = String(jetzt.getHours()).padStart(2, '0');
+        const minuten = String(jetzt.getMinutes()).padStart(2, '0');
+        const uhrzeitStr = stunden + "-" + minuten;
+        const dateiName = "Dart_Saison_Update_" + tagStr + "_" + uhrzeitStr + ".json";
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatePackage, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", dateiName);
+        
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        document.body.removeChild(downloadAnchor);
+
+        alert("🎉 Erfolgreich!\n\nDie Datei \"" + dateiName + "\" wurde in deinen Download-Ordner heruntergeladen.\n\nSende diese Datei jetzt einfach per WhatsApp an deine Kapitäne.");
+    } catch (err) {
+        alert("Fehler beim Exportieren: " + err.message);
+    }
+}
+window.generateAdminJsonUpdate = generateAdminJsonUpdate;
+
 
 
 // ===================================================================
