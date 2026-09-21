@@ -4044,27 +4044,57 @@ function applyAppUpdate() {
   alert("Neuer Spieltag geladen! Deine Mannschaften und Spieler wurden übernommen.");
   location.reload();
 }
+
+
+
+
+
+
+
+
+
+
+
+
 window.applyAppUpdate = applyAppUpdate;
 
-
-
+let deferredPrompt;
 
 function initPWAsystem() {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const banner = document.getElementById('pwa-install-msg');
+    if (banner) banner.style.display = 'block';
+  });
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .then(() => {
-        console.log("Dart-PWA: Registrierung der sw.js erfolgreich!");
-        const banner = document.getElementById('pwa-install-msg');
-        if (banner) banner.style.display = 'block';
-      })
+      .then(() => console.log("Dart-PWA: Registrierung der sw.js erfolgreich!"))
       .catch(err => console.error("PWA-Fehler:", err));
   }
 }
 
+function triggerPWAInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        const banner = document.getElementById('pwa-install-msg');
+        if (banner) banner.style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    alert("Das System ist noch nicht bereit. Bitte lade die App einmal im Inkognito-Modus neu!");
+  }
+}
+window.triggerPWAInstall = triggerPWAInstall;
 
-
-// Funktion 1: Speichert das Spiel mit allen Details strukturiert ab (Behebt den Speicherfehler)
+// HIER DARUNTER DARF NUR NOCH DER BEREITS EXISTIERENDE CODE STEHEN:
 function archiveCurrentMatch(matchName) {
+  // ... dieser Code steht schon in Ihrer Datei und bleibt einfach so, wie er ist! [1]
+
  try {
    // Lädt die bestehende Liste oder erstellt eine neue, falls leer
    let historyRaw = localStorage.getItem('DSH_match_history');
