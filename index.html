@@ -458,6 +458,17 @@ div:has(> .score-board),
 
 
 
+ <!-- HIER GENAU DEN NEUEN BUTTON REINKOPIEREN: -->
+ <div style="background:#eff6ff; border:2px solid #3b82f6; padding:12px; border-radius:6px; margin-bottom:15px; text-align:center; color: #1e40af;">
+   <h4 style="margin-top:0; color:#1e40af; font-size:14px; text-align: center;">📤 Aktuelle Saison-Update-Datei generieren</h4>
+   <p style="font-size:11px; color:#1e3a8a; margin-bottom:10px; text-align: center;">Sichert alle Mannschaften, Spieler, Passnummern und den aktuellen Spielplan in einer JSON-Datei für die Kapitäne.</p>
+   <button type="button" class="btn" style="width:100%; padding:10px; background-color:#3b82f6; color:white; font-weight:bold; border:none; border-radius:4px; cursor:pointer;" onclick="generateAdminJsonUpdate()">
+     💾 Update-Datei mit Zeitstempel erzeugen
+   </button>
+ </div>
+
+ <button class="btn btn-action" style="width:100%; background-color:#22c55e;" onclick="closeProtectedSettings()">Speichern &amp; Schließen</button>
+</div>
 
 
  
@@ -4786,6 +4797,40 @@ window.importCaptainJsonUpdate = importCaptainJsonUpdate;
 
 
 
+function generateAdminJsonUpdate() {
+    if (!state || !matchesDefinition) return alert("Keine Spieldaten zum Exportieren vorhanden!");
+
+    if (typeof savePlanEditorRows === "function") savePlanEditorRows(); 
+    if (typeof savePlayerMatrixRows === "function") savePlayerMatrixRows(); 
+    if (typeof updateSetupTitles === "function") updateSetupTitles();
+
+    const updatePackage = {
+        t1: state.title1 || "MKK Spielberichtsbogen",
+        t2: state.title2 || "DSH Dart - Liga",
+        plan: matchesDefinition,
+        teams: state.parsedTeams,
+        rawText: state.rawMatrixData || []
+    };
+
+    const jetzt = new Date();
+    const tagStr = jetzt.toLocaleDateString('de-DE').replace(/\./g, '-');
+    const stunden = String(jetzt.getHours()).padStart(2, '0');
+    const minuten = String(jetzt.getMinutes()).padStart(2, '0');
+    const uhrzeitStr = `${stunden}-${minuten}`;
+    const dateiName = `Dart_Saison_Update_${tagStr}_${uhrzeitStr}.json`;
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatePackage, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", dateiName);
+    
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+
+    alert(`🎉 Erfolgreich!\n\nDie Datei "${dateiName}" wurde generiert.\n\nSende diese Datei einfach per WhatsApp an deine Kapitäne.`);
+}
+window.generateAdminJsonUpdate = generateAdminJsonUpdate;
 
 
 </script>
