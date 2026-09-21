@@ -3940,7 +3940,7 @@ window.downloadUpdatedAppFile = downloadAppDirectly; // Fallback für alte Code-
              updateLeaderboard(); 
              renderCurrentGame(); 
              updatePlayedGamesList(); 
-             initPWASystem(); 
+             initPWAsystem(); 
              updateHistoryDropdown(); 
              
              if (state.substitutions && state.substitutions.length > 0) {
@@ -3951,6 +3951,7 @@ window.downloadUpdatedAppFile = downloadAppDirectly; // Fallback für alte Code-
              }
              updateSubPlayerDropdowns();
              return;
+
          }
      } catch(err) {
          console.error("Fehler beim Laden des Speicherstands:", err);
@@ -4049,31 +4050,16 @@ window.applyAppUpdate = applyAppUpdate;
 
 function initPWAsystem() {
   if ('serviceWorker' in navigator) {
-
-        // Erzeugt einen gültigen Service Worker direkt aus dem Code heraus (Inline-Blob)
-        const swCode = `
-            const CACHE_NAME = 'dart-bogen-v1';
-            self.addEventListener('install', (e) => self.skipWaiting());
-            self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
-            self.addEventListener('fetch', (e) => {
-                // Ermöglicht es der App, komplett offline zu arbeiten
-                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-            });
-        `;
-        
-        const blob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-        
-        navigator.serviceWorker.register(swUrl, { scope: './' })
-            .then(() => {
-                console.log("Dart-PWA: Registrierung erfolgreich!");
-                // Blende den blauen Installations-Banner oben ein, falls vorhanden
-                const banner = document.getElementById('pwa-install-msg');
-                if (banner) banner.style.display = 'block';
-            })
-            .catch(err => console.error("PWA-Fehler:", err));
-    }
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then(() => {
+            console.log("Dart-PWA: Registrierung der sw.js erfolgreich!");
+            const banner = document.getElementById('pwa-install-msg');
+            if (banner) banner.style.display = 'block';
+        })
+        .catch(err => console.error("PWA-Fehler:", err));
+  }
 }
+
 // Funktion 1: Speichert das Spiel mit allen Details strukturiert ab (Behebt den Speicherfehler)
 function archiveCurrentMatch(matchName) {
  try {
