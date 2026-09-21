@@ -4540,15 +4540,16 @@ window.assignScoreToPlayer = assignScoreToPlayer;
 function generateAdminJsonUpdate() {
     try {
         if (typeof state === "undefined" || !state) {
-            alert("Keine Spieldaten zum Exportieren vorhanden!");
-            return;
+            return alert("Keine Spieldaten zum Exportieren vorhanden!");
         }
 
-        // ===================================================================
-        // JEDER SPIELPLAN-NAME WIRD HIER ABGEFANGEN (UNZERSTÖRBAR!)
-        // ===================================================================
+        // Zwingt die App, alle eingegebenen Zeilen und Positionen aus der Tabelle auszulesen
+        if (typeof savePlanEditorRows === "function") savePlanEditorRows(); 
+        if (typeof savePlayerMatrixRows === "function") savePlayerMatrixRows(); 
+        if (typeof updateSetupTitles === "function") updateSetupTitles();
+
+        // ERZWUNGENES AUSLESEN: Wir holen uns den exakten Spielplan direkt aus dem Speicher
         let spielplanData = [];
-        
         if (typeof matchesDefinition !== "undefined" && matchesDefinition && matchesDefinition.length > 0) { 
             spielplanData = matchesDefinition; 
         } else if (state.matches && state.matches.length > 0) { 
@@ -4557,21 +4558,36 @@ function generateAdminJsonUpdate() {
             spielplanData = state.parsedMatches;
         } else if (state.plan && state.plan.length > 0) {
             spielplanData = state.plan;
-        } else {
-            // Letzter Rettungsanker: Wir schauen, ob globale Variablen existieren
-            if (window.matchesDefinition) spielplanData = window.matchesDefinition;
-            else if (window.state && window.state.matches) spielplanData = window.state.matches;
         }
 
+        // Sicherheits-Check: Falls der interne Speicher klemmt, lesen wir die HTML-Dropdowns direkt aus!
         if (!spielplanData || spielplanData.length === 0) {
-            alert("⚠️ Achtung: Es wurde kein aktiver Spielplan im Speicher gefunden! Bitte konfiguriere erst die Spiele im Zahnrad-Menü.");
+            spielplanData = [];
+            const rows = document.querySelectorAll("#editor-rows-body tr");
+            rows.forEach((row, index) => {
+                const typeInput = document.getElementById(`ed-type-${index}`);
+                if (typeInput) {
+                    spielplanData.push({
+                        type: typeInput.value,
+                        t1: [
+                            document.getElementById(`ed-t1-0-${index}`)?.value || "",
+                            document.getElementById(`ed-t1-1-${index}`)?.value || ""
+                        ],
+                        t2: [
+                            document.getElementById(`ed-t2-0-${index}`)?.value || "",
+                            document.getElementById(`ed-t2-1-${index}`)?.value || ""
+                        ],
+                        begin: document.getElementById(`ed-begin-${index}`)?.value || "H"
+                    });
+                }
+            });
         }
 
-        // Wir bauen das fertige, prall gefüllte Datenpaket zusammen
+        // Wir bauen das fertige, prall gefüllte Datenpaket inklusive Reihenfolge zusammen
         const updatePackage = {
             t1: state.title1 || "MKK Spielberichtsbogen",
             t2: state.title2 || "DSH Dart - Liga",
-            plan: spielplanData,                // Der gerettete Spielplan!
+            plan: spielplanData, // Enthält jetzt garantiert die feste Reihenfolge!
             teams: state.parsedTeams || {},
             rawText: state.rawMatrixData || []
         };
@@ -4592,13 +4608,12 @@ function generateAdminJsonUpdate() {
         downloadAnchor.click();
         document.body.removeChild(downloadAnchor);
 
-        alert("🎉 Erfolgreich!\n\nDie Datei \"" + dateiName + "\" enthält jetzt alle Teams UND den Spielplan.\n\nSende sie per WhatsApp an deine Kapitäne.");
+        alert("🎉 Erfolgreich!\n\nDie Datei \"" + dateiName + "\" wurde generiert und enthält die exakte Reihenfolge der Spiele.");
     } catch (err) {
         alert("Fehler beim Exportieren: " + err.message);
     }
 }
 window.generateAdminJsonUpdate = generateAdminJsonUpdate;
-
 
 
 
