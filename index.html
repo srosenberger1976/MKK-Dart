@@ -4052,14 +4052,15 @@ window.applyAppUpdate = applyAppUpdate;
 function initPWAsystem() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(() => {
-            console.log("Dart-PWA: Registrierung der sw.js erfolgreich!");
-            const banner = document.getElementById('pwa-install-msg');
-            if (banner) banner.style.display = 'block';
-        })
-        .catch(err => console.error("PWA-Fehler:", err));
+      .then(() => {
+        console.log("Dart-PWA: Registrierung der sw.js erfolgreich!");
+        const banner = document.getElementById('pwa-install-msg');
+        if (banner) banner.style.display = 'block';
+      })
+      .catch(err => console.error("PWA-Fehler:", err));
   }
 }
+
 
 
 // Funktion 1: Speichert das Spiel mit allen Details strukturiert ab (Behebt den Speicherfehler)
