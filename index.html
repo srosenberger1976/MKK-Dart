@@ -4049,16 +4049,17 @@ window.applyAppUpdate = applyAppUpdate;
 
 function initPWAsystem() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(() => {
-            console.log("Dart-PWA: Registrierung der sw.js erfolgreich!");
-            const banner = document.getElementById('pwa-install-msg');
-            if (banner) banner.style.display = 'block';
-        })
-        .catch(err => console.error("PWA-Fehler:", err));
-  }
-}
 
+        // Erzeugt einen gültigen Service Worker direkt aus dem Code heraus (Inline-Blob)
+        const swCode = `
+            const CACHE_NAME = 'dart-bogen-v1';
+            self.addEventListener('install', (e) => self.skipWaiting());
+            self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+            self.addEventListener('fetch', (e) => {
+                // Ermöglicht es der App, komplett offline zu arbeiten
+                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+            });
+        `;
         
         const blob = new Blob([swCode], { type: 'application/javascript' });
         const swUrl = URL.createObjectURL(blob);
