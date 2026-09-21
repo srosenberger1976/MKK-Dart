@@ -4536,40 +4536,6 @@ window.assignScoreToPlayer = assignScoreToPlayer;
 // GOOGLE DRIVE UPDATE-SYSTEM (JSON EXPORT OHNE DATEN-MÜLL)
 // ===================================================================
 function generateAdminJsonUpdate() {
-    if (!state || !matchesDefinition) return alert("Keine Daten zum Exportieren vorhanden!");
-
-    // Sichert zuerst alle eventuell im Adminbereich veränderten Daten im Zwischenspeicher
-    if (typeof savePlanEditorRows === "function") savePlanEditorRows(); 
-    if (typeof savePlayerMatrixRows === "function") savePlayerMatrixRows(); 
-    if (typeof updateSetupTitles === "function") updateSetupTitles();
-
-    // Wir erstellen ein perfekt sauberes Update-Paket (Nur Spielplan + Teams, keine Spielstand-Leichen)
-    const updatePackage = {
-        t1: state.title1 || "MKK Spielberichtsbogen",
-        t2: state.title2 || "DSH Dart - Liga",
-        plan: matchesDefinition,             // Der geänderte Spielplan
-        teams: state.parsedTeams,           // Die Mannschaften mit allen Spielern & Passnummern
-        rawText: state.rawMatrixData || []  // Die Rohdaten der Tabelle für spätere Admin-Arbeiten
-    };
-
-    // Datum für den Dateinamen generieren (z.B. Dart_Update_05-08-2026.json)
-    const dateStr = new Date().toLocaleDateString('de-DE').replace(/\./g, '-');
-    const fileName = `Dart_Update_${dateStr}.json`;
-
-    // Datei für den Download im Browser bereitstellen
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatePackage, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", fileName);
-    
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    document.body.removeChild(downloadAnchor);
-
-    alert(`🎉 Update-Datei "${fileName}" erfolgreich generiert!\n\nSchritt 1: Lade diese Datei jetzt in dein Google Drive hoch.\nSchritt 2: Sag den Kapitänen Bescheid, dass sie die Datei herunterladen und in ihrer App einspielen sollen.`);
-}
-// Macht die Funktion für den Klick-Event im HTML verfügbar
-window.generateAdminJsonUpdate = generateAdminJsonUpdate;
 
 
 // ===================================================================
