@@ -6,16 +6,8 @@
  <meta name="apple-mobile-web-app-capable" content="yes">
  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
  <meta name="apple-mobile-web-app-title" content="Dart-Bogen">
-
-
- <link rel="apple-touch-icon" href="icon-512.png">
- <link rel="manifest" href="manifest.json">
-
-
-
-
-
-
+ <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://w3.org viewBox=%220 0 100 100%22&gt;&lt;circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%232c3e50%22/&gt;&lt;circle cx=%2250%22 cy=%2250%22 r=%2235%22 fill=%22%23e74c3c%22/&gt;&lt;circle cx=%2250%22 cy=%2250%22 r=%2220%22 fill=%22%232ecc71%22/&gt;&lt;circle cx=%2250%22 cy=%2250%22 r=%225%22 fill=%22%23f1c40f%22/&gt;&lt;/svg&gt;">
+ <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22MKK%20Spielberichtsbogen%22,%22short_name%22:%22Dart-Bogen%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23d6d6d6%22,%22theme_color%22:%22%232c3e50%22,%22icons%22:[{%22src%22:%22data:image/svg+xml;utf8,&lt;svg xmlns=%27http://w3.org viewBox=%270 0 100 100%27&gt;&lt;circle cx=%2750%27 cy=%2750%27 r=%2745%27 fill=%27%232c3e50%27/&gt;&lt;circle cx=%2750%27 cy=%2750%27 r=%2735%27 fill=%27%23e74c3c%27/&gt;&lt;circle cx=%2750%27 cy=%2750%27 r=%2720%27 fill=%27%232ecc71%27/&gt;&lt;circle cx=%2750%27 cy=%2750%27 r=%275%27 fill=%27%23f1c40f%27/&gt;&lt;/svg&gt;%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%20maskable%22}]} ">
  <style>
  :root { 
  --heim-color: #2ecc71; 
@@ -33,13 +25,7 @@
  conic-gradient(from 9deg at center, #cccccc 0deg, #cccccc 18deg, #d6d6d6 18deg, #d6d6d6 36deg, #cccccc 36deg, #cccccc 54deg, #d6d6d6 54deg, #d6d6d6 72deg, #cccccc 72deg, #cccccc 90deg, #d6d6d6 90deg, #d6d6d6 108deg, #cccccc 108deg, #cccccc 126deg, #d6d6d6 126deg, #d6d6d6 144deg, #cccccc 144deg, #cccccc 162deg, #d6d6d6 162deg, #d6d6d6 180deg, #cccccc 180deg, #cccccc 198deg, #d6d6d6 198deg, #d6d6d6 216deg, #cccccc 216deg, #cccccc 234deg, #d6d6d6 234deg, #d6d6d6 252deg, #cccccc 252deg, #cccccc 270deg, #d6d6d6 270deg, #d6d6d6 288deg, #cccccc 288deg, #cccccc 306deg, #d6d6d6 306deg, #d6d6d6 324deg, #cccccc 324deg, #cccccc 342deg, #d6d6d6 342deg, #d6d6d6 360deg);
  background-attachment: fixed; background-position: center; color: var(--text-color); padding: 10px; max-width: 600px; margin: 0 auto 60px auto; 
  }
- 
-
-
-h1, h2, h3, h4 { text-align: center; margin-bottom: 10px; }
-
-
-
+ h1, h2, h3, h4 { text-align: center; margin-bottom: 10px; }
  .card { background: rgba(255, 255, 255, 0.96); border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(2px); position: relative; }
  .hidden { display: none !important; }
  .btn { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; display: inline-block; font-size: 14px; text-shadow: none; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
@@ -82,8 +68,7 @@ h1, h2, h3, h4 { text-align: center; margin-bottom: 10px; }
  
  /* Eingabefelder im Setup gestrafft, damit der gesamte Text hineinpasst */
  .editor-table input { padding: 4px 2px; font-size: 13px !important; width: 100% !important; box-sizing: border-box; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
- .editor-table select { padding: 6px 2px !important; font-size: 13px !important; width: 100% !important; min-width: 45px !important; color: #2c3e50 !important; background-color: #ffffff !important; display: inline-block !important; }
-
+ .editor-table select { padding: 4px 0; font-size: 11px; width: 100% !important; text-align: center; }
  .sandbox-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; }
  .pwa-banner { background: #3498db; color: white; padding: 10px; text-align: center; font-size: 13px; font-weight: bold; border-radius: 6px; margin-bottom: 12px; display: none; }
 <!-- ENDE TEIL 1 - CSS SETTINGS SPALTEN & TEXTFELDER -->
@@ -301,9 +286,11 @@ div:has(> .score-board),
     </ul>
   </div>
 
-  <button onclick="applyAppUpdate()" class="btn btn-heim" style="width: 100%; padding: 15px; font-size: 16px; font-weight: bold; background-color: #2563eb; border-color: #1d4ed8;">
-    Speicher bereinigen &amp; Spiel starten 🚀
-  </button>
+<button onclick="applyAppUpdate(); setTimeout(function() { window.scrollTo(0, 0); }, 100);" class="btn btn-heim" style="width: 100%; padding: 15px; font-size: 16px; font-weight: bold; background-color: #2563eb; border-color: #1d4ed8;">
+ Speicher bereinigen &amp; Spiel starten 🚀
+</button>
+
+
 </div>
 
 
@@ -321,17 +308,9 @@ div:has(> .score-board),
  <div id="quickAccessModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
  <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
  <span onclick="closeQuickAccess()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; font-weight: bold; color: #aaa;">×</span>
-  <h2 style="margin-top: 0; font-size: 20px;">Schnellzugriff</h2>
+ <h2 style="margin-top: 0; font-size: 20px;">Schnellzugriff</h2>
  <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
  
- <!-- HIER GENAU DEN NEUEN BUTTON REINKOPIEREN: -->
- <div style="margin-bottom: 20px; background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 6px;">
-   <h3 style="font-size: 14px; margin-bottom: 6px; color: #1e40af; margin-top: 0; text-align: left;">🎯 Saison-Update (JSON) laden</h3>
-   <p style="font-size: 11px; color: #3b82f6; margin-bottom: 8px; font-weight: bold; text-align: left;">Aktueller Stand nach Datum & Uhrzeit</p>
-<input type="file" id="quick-json-file-input" accept="*" onchange="importCaptainJsonUpdate(event)" style="font-size: 12px; width: 100%;">
-
- </div>
-
  
 
 
@@ -413,6 +392,12 @@ div:has(> .score-board),
  <h3>🛠 Admin-Konfiguration (Passwort: 1684)</h3>
  <div style="margin-bottom: 12px;">
 
+<button class="btn btn-danger" style="width: 100%; margin-bottom: 15px; padding: 10px;" onclick="cancelAdminSettings()">
+    Abbrechen (Zurück zur Auswahl) ❌
+</button>
+
+
+
 <!-- Vorher stand hier value="MKK Spielberichtsbogen" -->
 <label style="font-size: 11px; font-weight: bold;">Überschrift Zeile 1:</label>
 <input type="text" id="custom-title-1" placeholder="Deine Liga Zeile 1..." oninput="updateSetupTitles()">
@@ -464,14 +449,6 @@ div:has(> .score-board),
 
 
 
- <!-- EXPORT-BUTTON FÜR DEN LIGA-ADMIN -->
- <div style="background:#eff6ff; border:2px solid #3b82f6; padding:12px; border-radius:6px; margin-bottom:15px; text-align:center; color: #1e40af;">
-   <h4 style="margin-top:0; color:#1e40af; font-size:14px; text-align: center;">📤 Saison-Update-Datei generieren</h4>
-   <p style="font-size:11px; color:#1e3a8a; margin-bottom:10px; text-align: center;">Erstellt eine JSON-Datei mit allen aktuellen Mannschaften und dem Spielplan für die Kapitäne.</p>
-   <button type="button" class="btn" style="width:100%; padding:10px; background-color:#3b82f6; color:white; font-weight:bold; border:none; border-radius:4px; cursor:pointer;" onclick="generateAdminJsonUpdate()">
-     💾 JSON-Update mit Zeitstempel erzeugen
-   </button>
- </div>
 
 
  
@@ -671,99 +648,69 @@ function switchLigaStorage() {
     }
 })();
 
-
-
-
-
-
-
-
-
-
-
-
-
 // =========================================================================
 // REPARATUR V6: ABSOLUT SICHERES EINTRAGEN IN DIE LIVE-LISTE
 // =========================================================================
 function addManualPlayerQuick() {
-  const nameInput = document.querySelector('input[placeholder="Spielername..."]');
-  const passInput = document.querySelector('input[placeholder="Passnr."]');
-  const teamSelect = document.getElementById('quickNewPlayerTeam');
+    const nameInput = document.querySelector('input[placeholder="Spielername..."]');
+    const passInput = document.querySelector('input[placeholder="Passnr."]');
+    const teamSelect = document.getElementById('quick-team-select') || document.querySelector('.modal select') || document.querySelector('#quickAccessModal select');
 
-  if (!nameInput || !nameInput.value.trim()) {
-    alert("Bitte einen Spielernamen eingeben!");
-    return;
-  }
+    if (!nameInput || !nameInput.value.trim()) {
+        alert("Bitte einen Spielernamen eingeben!");
+        return;
+    }
 
-  const playerName = nameInput.value.trim();
-  const playerPass = passInput ? passInput.value.trim() : "";
-  
-  // WICHTIG: Das exakte Textformat, das Ihre App aus den Excel-Daten liest
-  const formatName = playerPass ? `${playerName} (${playerPass})` : playerName;
+    const playerName = nameInput.value.trim();
+    const playerPass = passInput ? passInput.value.trim() : "";
+    const formatName = playerPass ? `${playerName} (${playerPass})` : playerName;
 
-  let ausgewaehltesTeam = teamSelect ? teamSelect.value : "";
+    // 1. Wir suchen ALLE Dropdowns auf der Seite (H1, H2, H3, H4, G1, G2...)
+    const allSelects = document.querySelectorAll('select');
+    let hinfuegenErfolgreich = false;
 
-  if (!ausgewaehltesTeam && typeof state !== "undefined" && state.heimTeam) {
-    ausgewaehltesTeam = state.heimTeam;
-  }
+    allSelects.forEach(select => {
+        // Wir filtern die System-Dropdowns aus (wie das Admin- oder Team-Auswahlfeld)
+        if (select !== teamSelect && !select.id.includes('team') && !select.id.includes('build')) {
+            // Erstelle eine neue Auswahl-Option für den Spieler
+            const option = document.createElement('option');
+            option.value = playerName; // Der Wert, den das System beim Berechnen nutzt
+            option.text = formatName;  // Der Text, den man sieht
+            
+            select.appendChild(option);
+            hinfuegenErfolgreich = true;
+        }
+    });
 
-  if (!ausgewaehltesTeam) {
-    alert("Bitte wähle eine Mannschaft aus!");
-    return;
-  }
+    // 2. Wir sichern den Spieler im App-Zustand, damit er beim echten Speichern nicht verloren geht
+    if (typeof state !== 'undefined') {
+        // Wir packen den Spieler in jede erdenkliche Liste, die deine App im Hintergrund nutzen könnte
+        if (!state.manualPlayers) state.manualPlayers = [];
+        state.manualPlayers.push({ name: playerName, pass: playerPass });
+        
+        // Falls deine App ein globales Spieler-Array versteckt hat:
+        for (let key in state) {
+            if (Array.isArray(state[key]) && (key.toLowerCase().includes('player') || key.toLowerCase().includes('spieler'))) {
+                state[key].push({ name: playerName, pass: playerPass });
+            }
+        }
+        if (typeof saveAppState === "function") saveAppState();
+    }
 
-  // 1. Speichern im Core-Gehirn (Sowohl als Objekt als auch als Text-Fallback für maximale Sicherheit)
-  if (typeof state !== "undefined" && state.parsedTeams) {
-      if (!state.parsedTeams[ausgewaehltesTeam]) {
-          state.parsedTeams[ausgewaehltesTeam] = [];
-      }
-      
-      const existiertBereits = state.parsedTeams[ausgewaehltesTeam].some(p => {
-          return p === formatName || (p && p.name === playerName) || p === playerName;
-      });
+    // 3. Im LocalStorage für diese Sitzung merken
+    let sessionPlayers = JSON.parse(localStorage.getItem('quick_added_players') || "[]");
+    sessionPlayers.push({ name: playerName, pass: playerPass });
+    localStorage.setItem('quick_added_players', JSON.stringify(sessionPlayers));
 
-      if (!existiertBereits) {
-          // Wir schieben das Format rein, das die App für die Dropdowns nutzt
-          state.parsedTeams[ausgewaehltesTeam].push(formatName);
-          
-          // Und sichern das Objekt für die Lösch-Logik nach dem Spieltag
-          state.parsedTeams[ausgewaehltesTeam].push({
-              name: playerName,
-              id: playerPass || "TEMP-" + Math.floor(Math.random() * 1000000),
-              isTemporary: true
-          });
-      }
-  }
+    // Felder leeren
+    nameInput.value = "";
+    if (passInput) passInput.value = "";
 
-  // 2. Den Spieler direkt physisch in JEDES Dropdown auf dem Bildschirm einbauen
-  const allSelects = document.querySelectorAll('select');
-  allSelects.forEach(select => {
-      // Filtert Admin-Felder aus und betrifft nur die echten Spiel-Dropdowns
-      if (select.id !== 'quickNewPlayerTeam' && !select.id.includes('team') && !select.id.includes('build') && !select.id.includes('history')) {
-          const option = document.createElement('option');
-          option.value = formatName; // KORREKTUR: Value und Text müssen identisch sein, damit das Übertragen klappt!
-          option.textContent = formatName;
-          select.appendChild(option);
-          
-          // Zwingt den Browser, eine Änderung zu registrieren
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-  });
-
-  // 3. App-Zustand dauerhaft sichern und Oberfläche aktualisieren
-  if (typeof saveAppState === "function") saveAppState();
-  if (typeof buildTeamDropdowns === "function") buildTeamDropdowns();
-  if (typeof renderCurrentGame === "function") renderCurrentGame();
-
-  alert(`🎯 Spieler "${playerName}" erfolgreich eingetragen und freigeschaltet!`);
-  
-  if (nameInput) nameInput.value = "";
-  if (passInput) passInput.value = "";
-  if (typeof closeQuickAccess === "function") closeQuickAccess();
+    alert("Spieler " + playerName + " wurde direkt in alle Auswahllisten (H1, H2 etc.) eingetragen!");
+    
+    // WICHTIG: Hier KEIN location.reload() machen, da wir die Liste gerade live im Browser befüllt haben!
 }
-
-
+window.addManualPlayerQuick = addManualPlayerQuick;
 
 
 
@@ -4001,7 +3948,7 @@ window.downloadUpdatedAppFile = downloadAppDirectly; // Fallback für alte Code-
              updateLeaderboard(); 
              renderCurrentGame(); 
              updatePlayedGamesList(); 
-             initPWAsystem(); 
+             initPWASystem(); 
              updateHistoryDropdown(); 
              
              if (state.substitutions && state.substitutions.length > 0) {
@@ -4012,7 +3959,6 @@ window.downloadUpdatedAppFile = downloadAppDirectly; // Fallback für alte Code-
              }
              updateSubPlayerDropdowns();
              return;
-
          }
      } catch(err) {
          console.error("Fehler beim Laden des Speicherstands:", err);
@@ -4102,59 +4048,76 @@ function applyAppUpdate() {
   localStorage.setItem('dsh_letztes_update', dateiErstellungsZeit);
   
   alert("Neuer Spieltag geladen! Deine Mannschaften und Spieler wurden übernommen.");
+  
+  // NEU: Dem Browser sagen, dass er beim Neuladen die Scroll-Position NICHT wiederherstellen soll
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  
+  // NEU: Vor dem Reload aktiv ganz nach oben scrollen
+  window.scrollTo(0, 0);
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+
+  // Jetzt erst die Seite neu laden
   location.reload();
 }
 
-
-
-
-
-
-
-
-
-
-
-
 window.applyAppUpdate = applyAppUpdate;
 
-let deferredPrompt;
+
+
+// Sorgt dafür, dass der Browser nach dem Neuladen IMMER ganz oben startet
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
+// Sobald die Seite komplett geladen ist, wird unbarmherzig nach oben gescrollt
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }, 50); // Blitzschneller Sprung nach oben, bevor Chrome scrollen kann
+});
+
+
+
+
+
+
+
+
 
 function initPWAsystem() {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    const banner = document.getElementById('pwa-install-msg');
-    if (banner) banner.style.display = 'block';
-  });
-
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .then(() => console.log("Dart-PWA: Registrierung der sw.js erfolgreich!"))
-      .catch(err => console.error("PWA-Fehler:", err));
-  }
-}
 
-function triggerPWAInstall() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        const banner = document.getElementById('pwa-install-msg');
-        if (banner) banner.style.display = 'none';
-      }
-      deferredPrompt = null;
-    });
-  } else {
-    alert("Das System ist noch nicht bereit. Bitte lade die App einmal im Inkognito-Modus neu!");
-  }
+        // Erzeugt einen gültigen Service Worker direkt aus dem Code heraus (Inline-Blob)
+        const swCode = `
+            const CACHE_NAME = 'dart-bogen-v1';
+            self.addEventListener('install', (e) => self.skipWaiting());
+            self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+            self.addEventListener('fetch', (e) => {
+                // Ermöglicht es der App, komplett offline zu arbeiten
+                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+            });
+        `;
+        
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        
+        navigator.serviceWorker.register(swUrl, { scope: './' })
+            .then(() => {
+                console.log("Dart-PWA: Registrierung erfolgreich!");
+                // Blende den blauen Installations-Banner oben ein, falls vorhanden
+                const banner = document.getElementById('pwa-install-msg');
+                if (banner) banner.style.display = 'block';
+            })
+            .catch(err => console.error("PWA-Fehler:", err));
+    }
 }
-window.triggerPWAInstall = triggerPWAInstall;
-
-// HIER DARUNTER DARF NUR NOCH DER BEREITS EXISTIERENDE CODE STEHEN:
+// Funktion 1: Speichert das Spiel mit allen Details strukturiert ab (Behebt den Speicherfehler)
 function archiveCurrentMatch(matchName) {
-  // ... dieser Code steht schon in Ihrer Datei und bleibt einfach so, wie er ist! [1]
-
  try {
    // Lädt die bestehende Liste oder erstellt eine neue, falls leer
    let historyRaw = localStorage.getItem('DSH_match_history');
@@ -4538,83 +4501,40 @@ window.assignScoreToPlayer = assignScoreToPlayer;
 // GOOGLE DRIVE UPDATE-SYSTEM (JSON EXPORT OHNE DATEN-MÜLL)
 // ===================================================================
 function generateAdminJsonUpdate() {
-    try {
-        if (typeof state === "undefined" || !state) {
-            return alert("Keine Spieldaten zum Exportieren vorhanden!");
-        }
+    if (!state || !matchesDefinition) return alert("Keine Daten zum Exportieren vorhanden!");
 
-        // Zwingt die App, alle eingegebenen Zeilen und Positionen aus der Tabelle auszulesen
-        if (typeof savePlanEditorRows === "function") savePlanEditorRows(); 
-        if (typeof savePlayerMatrixRows === "function") savePlayerMatrixRows(); 
-        if (typeof updateSetupTitles === "function") updateSetupTitles();
+    // Sichert zuerst alle eventuell im Adminbereich veränderten Daten im Zwischenspeicher
+    if (typeof savePlanEditorRows === "function") savePlanEditorRows(); 
+    if (typeof savePlayerMatrixRows === "function") savePlayerMatrixRows(); 
+    if (typeof updateSetupTitles === "function") updateSetupTitles();
 
-        // ERZWUNGENES AUSLESEN: Wir holen uns den exakten Spielplan direkt aus dem Speicher
-        let spielplanData = [];
-        if (typeof matchesDefinition !== "undefined" && matchesDefinition && matchesDefinition.length > 0) { 
-            spielplanData = matchesDefinition; 
-        } else if (state.matches && state.matches.length > 0) { 
-            spielplanData = state.matches; 
-        } else if (state.parsedMatches && state.parsedMatches.length > 0) {
-            spielplanData = state.parsedMatches;
-        } else if (state.plan && state.plan.length > 0) {
-            spielplanData = state.plan;
-        }
+    // Wir erstellen ein perfekt sauberes Update-Paket (Nur Spielplan + Teams, keine Spielstand-Leichen)
+    const updatePackage = {
+        t1: state.title1 || "MKK Spielberichtsbogen",
+        t2: state.title2 || "DSH Dart - Liga",
+        plan: matchesDefinition,             // Der geänderte Spielplan
+        teams: state.parsedTeams,           // Die Mannschaften mit allen Spielern & Passnummern
+        rawText: state.rawMatrixData || []  // Die Rohdaten der Tabelle für spätere Admin-Arbeiten
+    };
 
-        // Sicherheits-Check: Falls der interne Speicher klemmt, lesen wir die HTML-Dropdowns direkt aus!
-        if (!spielplanData || spielplanData.length === 0) {
-            spielplanData = [];
-            const rows = document.querySelectorAll("#editor-rows-body tr");
-            rows.forEach((row, index) => {
-                const typeInput = document.getElementById(`ed-type-${index}`);
-                if (typeInput) {
-                    spielplanData.push({
-                        type: typeInput.value,
-                        t1: [
-                            document.getElementById(`ed-t1-0-${index}`)?.value || "",
-                            document.getElementById(`ed-t1-1-${index}`)?.value || ""
-                        ],
-                        t2: [
-                            document.getElementById(`ed-t2-0-${index}`)?.value || "",
-                            document.getElementById(`ed-t2-1-${index}`)?.value || ""
-                        ],
-                        begin: document.getElementById(`ed-begin-${index}`)?.value || "H"
-                    });
-                }
-            });
-        }
+    // Datum für den Dateinamen generieren (z.B. Dart_Update_05-08-2026.json)
+    const dateStr = new Date().toLocaleDateString('de-DE').replace(/\./g, '-');
+    const fileName = `Dart_Update_${dateStr}.json`;
 
-        // Wir bauen das fertige, prall gefüllte Datenpaket inklusive Reihenfolge zusammen
-        const updatePackage = {
-            t1: state.title1 || "MKK Spielberichtsbogen",
-            t2: state.title2 || "DSH Dart - Liga",
-            plan: spielplanData, // Enthält jetzt garantiert die feste Reihenfolge!
-            teams: state.parsedTeams || {},
-            rawText: state.rawMatrixData || []
-        };
+    // Datei für den Download im Browser bereitstellen
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatePackage, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", fileName);
+    
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
 
-        const jetzt = new Date();
-        const tagStr = jetzt.toLocaleDateString('de-DE').replace(/\./g, '-');
-        const stunden = String(jetzt.getHours()).padStart(2, '0');
-        const minuten = String(jetzt.getMinutes()).padStart(2, '0');
-        const uhrzeitStr = stunden + "-" + minuten;
-        const dateiName = "Dart_Saison_Update_" + tagStr + "_" + uhrzeitStr + ".json";
-
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatePackage, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", dateiName);
-        
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        document.body.removeChild(downloadAnchor);
-
-        alert("🎉 Erfolgreich!\n\nDie Datei \"" + dateiName + "\" wurde generiert und enthält die exakte Reihenfolge der Spiele.");
-    } catch (err) {
-        alert("Fehler beim Exportieren: " + err.message);
-    }
+    alert(`🎉 Update-Datei "${fileName}" erfolgreich generiert!\n\nSchritt 1: Lade diese Datei jetzt in dein Google Drive hoch.\nSchritt 2: Sag den Kapitänen Bescheid, dass sie die Datei herunterladen und in ihrer App einspielen sollen.`);
 }
+// Macht die Funktion für den Klick-Event im HTML verfügbar
 window.generateAdminJsonUpdate = generateAdminJsonUpdate;
-
 
 
 // ===================================================================
@@ -4836,72 +4756,63 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-function importCaptainJsonUpdate(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.plan || !data.teams) return alert("❌ Keine gültige Update-Datei!");
-
-      state.title1 = data.t1 || state.title1;
-      state.title2 = data.t2 || state.title2;
-      state.parsedTeams = data.teams;
-      state.rawMatrixData = data.rawText || [];
-      matchesDefinition = data.plan;
-
-      state.currentMatchIdx = 0;
-      state.scores = { team1: 0, team2: 0 };
-      state.substitutions = [];
-      state.substitutedOutPlayers = [];
-      state.subRelation = {};
-      state.stats = {};
-      state.history = [];
-      state.gameResults = [];
-      state.isMatchActive = false;
-
-      localStorage.setItem('Dart_state', JSON.stringify(state));
-      alert("🎯 Saison-Update erfolgreich geladen!");
-      location.reload();
-    } catch (err) { alert("❌ Fehler: " + err.message); }
-  };
-  reader.readAsText(file);
-}
-window.importCaptainJsonUpdate = importCaptainJsonUpdate;
 
 
-function generateAdminJsonUpdate() {
-    if (typeof state === "undefined" || !state) return alert("Keine Spieldaten zum Exportieren vorhanden!");
-
-    const updatePackage = {
-        t1: state.title1 || "MKK Spielberichtsbogen",
-        t2: state.title2 || "DSH Dart - Liga",
-        plan: typeof matchesaDefinition !== "undefined" ? matchesDefinition : [],
-        teams: state.parsedTeams || {},
-        rawText: state.rawMatrixData || []
-    };
-
-    const jetzt = new Date();
-    const tagStr = jetzt.toLocaleDateString('de-DE').replace(/\./g, '-');
-    const stunden = String(jetzt.getHours()).padStart(2, '0');
-    const minuten = String(jetzt.getMinutes()).padStart(2, '0');
-    const uhrzeitStr = `${stunden}-${minuten}`;
-    const dateiName = `Dart_Saison_Update_${tagStr}_${uhrzeitStr}.json`;
-
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatePackage, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", dateiName);
+function cancelAdminSettings() {
+    // 1. Admin-Menü unsichtbar machen
+    var adminMenu = document.getElementById('protected-settings-menu');
+    if (adminMenu) {
+        adminMenu.classList.add('hidden');
+        adminMenu.style.display = 'none';
+    }
     
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    document.body.removeChild(downloadAnchor);
-
-    alert(`🎉 Erfolgreich!\n\nDie Datei "${dateiName}" wurde generiert.\n\nSende diese Datei einfach per WhatsApp an deine Kapitäne.`);
+    // 2. Den übergeordneten Setup-Screen komplett sichtbar machen
+    var setupScreen = document.getElementById('setup-screen');
+    if (setupScreen) {
+        setupScreen.classList.remove('hidden');
+        setupScreen.style.display = 'block';
+    }
+    
+    // 3. Alle Kind-Elemente im Setup-Screen (Dropdowns, Tabellen) wieder einblenden
+    // Falls die App die Listen innerhalb des Setup-Screens versteckt hat:
+    if (setupScreen) {
+        var children = setupScreen.children;
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].id !== 'protected-settings-menu') {
+                children[i].classList.remove('hidden');
+                if (children[i].style.display === 'none') {
+                    children[i].style.display = '';
+                }
+            }
+        }
+    }
+    
+    // 4. Nach oben zum Start der Auswahllisten scrollen
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-window.generateAdminJsonUpdate = generateAdminJsonUpdate;
+
+
+
+// GLOBALER WÄCHTER: Zwingt jede Ansicht, immer ganz oben zu starten
+document.addEventListener('click', function(event) {
+    // Prüft, ob ein Button oder ein klickbares Element gedrückt wurde
+    if (event.target.closest('button') || event.target.closest('.btn') || event.target.closest('[onclick]')) {
+        
+        // Wartet kurz, bis die App die Ansicht im Hintergrund umgeschaltet hat
+        setTimeout(function() {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+            
+            // Sicherheitshalber nach einer weiteren Zehntelsekunde nochmal, 
+            // falls die App etwas langsamer war
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+            }, 100);
+            
+        }, 50); // 50 Millisekunden Verzögerung reichen völlig aus
+    }
+}, true);
 
 
 
