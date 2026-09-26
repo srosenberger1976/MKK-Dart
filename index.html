@@ -398,6 +398,13 @@ div:has(> .score-board),
 
 
 
+
+
+
+
+
+
+
 <!-- Vorher stand hier value="MKK Spielberichtsbogen" -->
 <label style="font-size: 11px; font-weight: bold;">Überschrift Zeile 1:</label>
 <input type="text" id="custom-title-1" placeholder="Deine Liga Zeile 1..." oninput="updateSetupTitles()">
@@ -2541,6 +2548,57 @@ const defaultPlan = [
   "substitutedOutPlayers": [],
   "subRelation": {}
 };
+
+
+
+// HIER EINSETZEN (direkt unter }; und über function saveAppState())
+window.addEventListener('DOMContentLoaded', () => {
+  const ligaId = document.getElementById("custom-liga-id") ? document.getElementById("custom-liga-id").value : "MKK";
+  
+  // 1. Gespeicherte Titel laden
+  const savedT1 = localStorage.getItem(ligaId + "_live_title_1");
+  const savedT2 = localStorage.getItem(ligaId + "_live_title_2");
+  if (savedT1 && document.getElementById("main-title-1")) document.getElementById("main-title-1").innerText = savedT1;
+  if (savedT2 && document.getElementById("main-title-2")) document.getElementById("main-title-2").innerText = savedT2;
+  
+  if (typeof state !== 'undefined') {
+    // 2. Gespeicherte Spieler in parsedTeams UND rawMatrixData laden
+    const savedSpieler = localStorage.getItem(ligaId + "_live_spieler");
+    if (savedSpieler) {
+      const spielerListe = JSON.parse(savedSpieler);
+      
+      state.parsedTeams = {};
+      state.rawMatrixData = [];
+      
+      spielerListe.forEach(sp => {
+        state.rawMatrixData.push({
+          team: sp.team,
+          name: sp.name,
+          pass: sp.pass
+        });
+        
+        if (!state.parsedTeams[sp.team]) {
+          state.parsedTeams[sp.team] = [];
+        }
+        let eintrag = sp.name;
+        if (sp.pass) eintrag += " [" + sp.pass + "]";
+        state.parsedTeams[sp.team].push(eintrag);
+      });
+    }
+    
+    // 3. Gespeicherten Spielplan laden
+    const savedSpielplan = localStorage.getItem(ligaId + "_live_spielplan");
+    if (savedSpielplan) {
+      state.spielplan = JSON.parse(savedSpielplan);
+    }
+  }
+});
+
+
+
+
+
+
 function saveAppState() { try { localStorage.setItem('Dart_state', JSON.stringify(state)); } catch(e) {} }
 
  function saveCurrentInputs() {
@@ -3864,6 +3922,18 @@ function downloadAppDirectly() {
             history: [], 
             substitutions: [], 
             gameResults: [], 
+
+
+
+
+
+
+
+
+
+
+
+
             substitutedOutPlayers: [], 
             subRelation: {}
         };
@@ -4607,6 +4677,50 @@ function clearFullscreenCanvas() {
   }
 }
 
+
+
+function downloadUpdatedHTML() {
+  // --- FRAGE 1: LIVE IN DIESER APP SPEICHERN ---
+  let liveSpeichern = confirm("📝 Möchtest du die geänderten Spieler und Spiele JETZT live in dieser laufenden App speichern?");
+  
+  if (liveSpeichern) {
+    if (typeof state !== 'undefined' && state.spielplan) {
+      // Sichert die Daten sofort im offiziellen App-Speicher
+      localStorage.setItem('Dart_state', JSON.stringify(state));
+      
+      const ligaId = document.getElementById("custom-liga-id") ? document.getElementById("custom-liga-id").value : "MKK";
+      localStorage.setItem(ligaId + "_sicherheits_spielplan", JSON.stringify(state.spielplan));
+      localStorage.setItem(ligaId + "_live_spieler", JSON.stringify(state.rawMatrixData || []));
+      
+      alert("💾 Änderungen erfolgreich live im Browser übernommen!");
+    }
+  }
+
+  // --- FRAGE 2: HTML-DATEI HERUNTERLADEN ---
+  let dateiLaden = confirm("📥 Möchtest du ZUSÄTZLICH die neue, fertig konfigurierte HTML-Datei für deine Spieler herunterladen (zum Weitergeben)?");
+  
+  if (dateiLaden) {
+    // Hier folgt der originale Download-Prozess deiner App
+    alert("Die HTML-Datei wird nun generiert und heruntergeladen...");
+    
+    // Holt den aktuellen Zustand deiner Benutzeroberfläche
+    let currentHTML = document.documentElement.outerHTML;
+    let blob = new Blob([currentHTML], { type: "text/html;charset=utf-8" });
+    let a = document.createElement("a");
+    const ligaId = document.getElementById("custom-liga-id") ? document.getElementById("custom-liga-id").value : "MKK";
+    a.href = URL.createObjectURL(blob);
+    a.download = "Spielberichtsbogen_" + ligaId + ".html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } else {
+    // Wenn die Datei nicht geladen wird, aktualisieren wir einfach die Seite,
+    // damit das Scoreboard die soeben live gespeicherten Daten sofort anzeigt.
+    window.location.reload();
+  }
+}
+
+
 function closeFullscreenSignature(save) {
   const overlay = document.getElementById("signature-fullscreen-overlay");
   const fsCanvas = document.getElementById("fullscreen-canvas");
@@ -4816,6 +4930,52 @@ document.addEventListener('click', function(event) {
 
 
 
+
+
+
+// ==========================================================================
+// SAUBERE SPEICHER-ERWEITERUNG FÜR DEN ORIGINALEN BUTTON
+// ==========================================================================
+
+function overwriteAppWithNewHTML() {
+  // 1. Hole den gesamten geänderten Quelltext der aktuellen Seite
+  const neuerQuelltext = document.documentElement.outerHTML;
+  
+  // 2. Speicher den fertigen HTML-Code fest im Browser-Speicher ab
+  localStorage.setItem('Dart_App_HTML_Backup', neuerQuelltext);
+  
+  // 3. Admin-Menü schließen (falls vorhanden)
+  if (typeof cancelAdminSettings === "function") {
+    cancelAdminSettings();
+  } else {
+    const adminMenu = document.getElementById("protected-settings-menu");
+    if (adminMenu) adminMenu.style.display = "none";
+  }
+  
+  alert("💾 Die App wurde erfolgreich im Browser aktualisiert und gesichert!");
+  
+  // 4. Seite neu laden, damit das neue HTML-Layout sofort aktiv wird
+  window.location.reload();
+}
+
+// Lade-Wächter: Wenn beim Starten eine gespeicherte HTML-Version vorliegt,
+// zwingen wir den Browser dazu, dieses Layout zu verwenden.
+window.addEventListener('DOMContentLoaded', () => {
+  const gespeichertesHTML = localStorage.getItem('Dart_App_HTML_Backup');
+  
+  // Wichtig: Wir prüfen, ob wir nicht bereits in der aktualisierten Version sind,
+  // um eine Endlosschleife beim Neuladen zu verhindern.
+  if (gespeichertesHTML && !window.name.includes("loaded_backup")) {
+    window.name = "loaded_backup";
+    document.open();
+    document.write(gespeichertesHTML);
+    document.close();
+  }
+});
+
+
+
+</script>
 </script>
 
 
